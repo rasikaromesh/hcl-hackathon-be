@@ -19,7 +19,9 @@ public class AuditService {
 
     private AuditRecordDto mapToDto(AuditRecord record) {
 //        TODO link instrument name
-        return new AuditRecordDto(record.getTransactionRef(), record.getInstrumentId(), null, record.getTradeType(),
+        return new AuditRecordDto(record.getTransactionRef(), record.getInstrument().getInstrumentId(),
+                record.getInstrument().getName(),
+                record.getTradeType(),
                 record.getAuditDate());
     }
 }
