@@ -1,15 +1,18 @@
-package org.rrd.hclhackathonbe.audit.AuditRecordDto;
+package org.rrd.hclhackathonbe.audit.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.rrd.hclhackathonbe.audit.models.TradeType;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Data
+@AllArgsConstructor
 public class AuditRecordDto {
     private String transactionRef;
     private UUID instrumentId;
     private String instrumentName;
-    private String tradeType; // TODO make it enum
+    private TradeType tradeType;
     private Date auditDate;
 }
