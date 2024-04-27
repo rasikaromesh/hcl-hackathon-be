@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -36,9 +37,11 @@ public class AuditControllerTest {
         int INSTRUMENT_ID_3 = 3;
         auditRecordRepository.saveAll(
                 List.of(
-                        createMockAuditRecord(INSTRUMENT_ID_1),
-                        createMockAuditRecord(INSTRUMENT_ID_2),
-                        createMockAuditRecord(INSTRUMENT_ID_3))
+                        createMockAuditRecord(INSTRUMENT_ID_1, Optional.of(TradeType.BUY)),
+                        createMockAuditRecord(INSTRUMENT_ID_2, Optional.of(TradeType.BUY)),
+                        createMockAuditRecord(INSTRUMENT_ID_3, Optional.of(TradeType.BUY)),
+                        createMockAuditRecord(INSTRUMENT_ID_1, Optional.of(TradeType.SELL))
+                )
         );
     }
 
@@ -81,12 +84,22 @@ public class AuditControllerTest {
 
     }
 
-    private AuditRecord createMockAuditRecord(int id) {
+    @Test
+    void shouldReturnListOfAuditRecordWithTradeTypeBuy() throws Exception {
+
+        mockMvc.perform(get("/api/v1/audit?tradeType=SELL")
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
+
+    }
+
+    private AuditRecord createMockAuditRecord(int id, Optional<TradeType> tradeType) {
         AuditRecord auditRecord = new AuditRecord();
         auditRecord.setId(id);
         auditRecord.setTransactionRef(UUID.randomUUID().toString());
         auditRecord.setInstrument(createMockInstrument(UUID.randomUUID()));
-        auditRecord.setTradeType(TradeType.BUY);
+        auditRecord.setTradeType(tradeType.orElse(TradeType.BUY));
         auditRecord.setAuditDate(new Date());
         return auditRecord;
     }
