@@ -18,4 +18,5 @@ public class Instrument {
     @Id
     private UUID instrumentId;
     private String name;
+//    TODO implement the rest of the fields after checking with the team.
 }
