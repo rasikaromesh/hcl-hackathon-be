@@ -35,12 +35,13 @@ public class AuditControllerTest {
         int INSTRUMENT_ID_1 = 1;
         int INSTRUMENT_ID_2 = 2;
         int INSTRUMENT_ID_3 = 3;
+        int INSTRUMENT_ID_4 = 4;
         auditRecordRepository.saveAll(
                 List.of(
                         createMockAuditRecord(INSTRUMENT_ID_1, Optional.of(TradeType.BUY)),
                         createMockAuditRecord(INSTRUMENT_ID_2, Optional.of(TradeType.BUY)),
                         createMockAuditRecord(INSTRUMENT_ID_3, Optional.of(TradeType.BUY)),
-                        createMockAuditRecord(INSTRUMENT_ID_1, Optional.of(TradeType.SELL))
+                        createMockAuditRecord(INSTRUMENT_ID_4, Optional.of(TradeType.SELL))
                 )
         );
     }
@@ -48,7 +49,7 @@ public class AuditControllerTest {
     @Test
     void shouldReturnHttp200() throws Exception {
 
-        mockMvc.perform(get("/api/v1/audit")
+        mockMvc.perform(get("/api/v1/audit?pageNumber=0&pageSize=10")
                 .contentType(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
 
@@ -56,7 +57,7 @@ public class AuditControllerTest {
 
     @Test
     void shouldReturnListOfAuditRecord() throws Exception {
-        mockMvc.perform(get("/api/v1/audit")
+        mockMvc.perform(get("/api/v1/audit?pageNumber=0&pageSize=10")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
@@ -67,17 +68,17 @@ public class AuditControllerTest {
     @Test
     void shouldReturnListOfAuditRecordWithSize() throws Exception {
 
-        mockMvc.perform(get("/api/v1/audit")
+        mockMvc.perform(get("/api/v1/audit?pageNumber=0&pageSize=10")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
+                .andExpect(jsonPath("$").isArray());
 
     }
 
     @Test
     void shouldReturnListOfAuditRecordWithInstrumentName() throws Exception {
 
-        mockMvc.perform(get("/api/v1/audit")
+        mockMvc.perform(get("/api/v1/audit?pageNumber=0&pageSize=10")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].instrumentName").isNotEmpty());
@@ -87,10 +88,13 @@ public class AuditControllerTest {
     @Test
     void shouldReturnListOfAuditRecordWithTradeTypeBuy() throws Exception {
 
-        mockMvc.perform(get("/api/v1/audit?tradeType=SELL")
+        mockMvc.perform(get("/api/v1/audit?pageNumber=0&pageSize=10&sortBy=tradeType")
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty());
+                .andExpect(jsonPath("$[0].tradeType").value("BUY"))
+                .andExpect(jsonPath("$[1].tradeType").value("BUY"))
+                .andExpect(jsonPath("$[2].tradeType").value("BUY"))
+                .andExpect(jsonPath("$[3].tradeType").value("SELL"));
 
     }
 

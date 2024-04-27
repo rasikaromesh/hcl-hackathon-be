@@ -1,12 +1,10 @@
 package org.rrd.hclhackathonbe.audit.repository;
 
 import org.rrd.hclhackathonbe.audit.models.AuditRecord;
-import org.rrd.hclhackathonbe.audit.models.TradeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
-
-public interface AuditRecordRepository extends JpaRepository<AuditRecord, Long>{
-    List<AuditRecord> findByTradeType(TradeType tradeType);
+public interface AuditRecordRepository extends JpaRepository<AuditRecord, Integer>, PagingAndSortingRepository<AuditRecord,
+        Integer> {
 
 }
